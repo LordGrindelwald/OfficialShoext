@@ -1,4 +1,4 @@
--- {"id":1308639977,"ver":"1.0.3","libVer":"1.0.0","author":"Jobobby04","dep":["dkjson>=1.0.1"]}
+-- {"id":1308639977,"ver":"1.0.4","libVer":"1.0.0","author":"Jobobby04","dep":["dkjson>=1.0.1"]}
 
 local baseURL = "https://www.mcstories.com"
 local settings = {}
@@ -257,6 +257,8 @@ end
 --- @return NovelInfo[]
 local function search(filters)
 	local page = filters[PAGE]
+	print(page)
+	print(type(page))
 	local url = filters[QUERY]:gsub('^%s*(.-)%s*$', '%1')
 	if page == 1 and shrinkURL(url):match("index.html") then
 		local novelUrl = url:gsub("/$", "")
@@ -270,12 +272,12 @@ local function search(filters)
 		}
 	end
 
-	if page > 1 then
+	if page > 2 then
 		return {}
 	end
 
 	local categoryNumber = tonumber(filters[2])
-	if categoryNumber > 1 then
+	if categoryNumber > 0 then
 		local category = Tags[categoryNumber]
 		local document = ClientGetDocument("https://mcstories.com/Tags/" .. category.name .. ".html")
 		return map(document:select("tbody > tr"), function(v)
@@ -294,6 +296,7 @@ local function search(filters)
 
 	local searchTags = {}
 	for i, v in ipairs(filters) do
+		print(i, v)
 		if i > 2 and v == true then
 			table.insert(searchTags, i - 2)
 		end
@@ -355,7 +358,6 @@ return {
 	-- Must have at least one value
 	listings = {
 		Listing("Whats New", false, function(data)
-			getSvengaliTagsIfNeeded()
 			local document = ClientGetDocument("https://mcstories.com/WhatsNew.html")
 			return map(document:select("div.story"), function(v)
 				local items = v:select("div")
