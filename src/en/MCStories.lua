@@ -1,4 +1,4 @@
--- {"id":1308639977,"ver":"1.0.4","libVer":"1.0.0","author":"Jobobby04","dep":["dkjson>=1.0.1"]}
+-- {"id":1308639977,"ver":"1.0.5","libVer":"1.0.0","author":"Jobobby04","dep":["dkjson>=1.0.1"]}
 
 local baseURL = "https://www.mcstories.com"
 local settings = {}
@@ -100,7 +100,7 @@ local function flattenToFilters(tagsTable, layer)
 			for _, y in ipairs(childFilters) do
 				table.insert(newFilters, y)
 			end
-			table.insert(filters, FilterGroup(v["name"], newFilters))
+			table.insert(filters, FilterList(v["name"], newFilters))
 		else
 			if v["tagable"] == "1" then
 				table.insert(filters, CheckboxFilter(tonumber(v["id"]) + 2, name))
@@ -257,8 +257,6 @@ end
 --- @return NovelInfo[]
 local function search(filters)
 	local page = filters[PAGE]
-	print(page)
-	print(type(page))
 	local url = filters[QUERY]:gsub('^%s*(.-)%s*$', '%1')
 	if page == 1 and shrinkURL(url):match("index.html") then
 		local novelUrl = url:gsub("/$", "")
@@ -272,7 +270,7 @@ local function search(filters)
 		}
 	end
 
-	if page > 2 then
+	if page > 1 then
 		return {}
 	end
 
@@ -295,8 +293,8 @@ local function search(filters)
 	end
 
 	local searchTags = {}
+	print(#filters)
 	for i, v in ipairs(filters) do
-		print(i, v)
 		if i > 2 and v == true then
 			table.insert(searchTags, i - 2)
 		end
